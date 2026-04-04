@@ -8,7 +8,7 @@ The platform provides a user-friendly interface for discovering, organizing, and
 - Abil Arsen  
 - Sagyntay Nazerke  
 - Jumabay Zhanerke  
-- Akmaral  
+- Gaukarbek Akmaral  
 
 ## Features
 - Browse books by categories  
