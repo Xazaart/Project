@@ -1,0 +1,21 @@
+<div class="auth-card">
+  <h2>Login</h2>
+
+  @if (errorMessage) {
+    <div class="error">{{ errorMessage }}</div>
+  }
+
+  <form (ngSubmit)="onLogin()" #f="ngForm">
+    <label>Username</label>
+    <input type="text" name="username" [(ngModel)]="username" required />
+
+    <label>Password</label>
+    <input type="password" name="password" [(ngModel)]="password" required />
+
+    <button type="submit" [disabled]="!f.form.valid || loading" class="btn-primary">
+      {{ loading ? 'Logging in...' : 'Login' }}
+    </button>
+  </form>
+
+  <p>No account? <a routerLink="/register">Register</a></p>
+</div>

@@ -1,0 +1,55 @@
+<section class="favorites-page">
+  <div class="page-header">
+    <h2>♥ My Favorites</h2>
+    <p class="subtitle">
+      @if (favorites.length > 0) {
+        {{ favorites.length }} book{{ favorites.length === 1 ? '' : 's' }} in your wishlist
+      } @else {
+        Your personal reading wishlist
+      }
+    </p>
+  </div>
+
+  @if (successMessage) { <div class="success">{{ successMessage }}</div> }
+  @if (errorMessage)   { <div class="error">{{ errorMessage }}</div> }
+
+  @if (favorites.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">💔</div>
+      <h3>No favorites yet</h3>
+      <p>Browse our book collection and tap the ♥ button on any book to save it here.</p>
+      <a routerLink="/books" class="btn-primary">Browse books</a>
+    </div>
+  } @else {
+    <div class="fav-grid">
+      @for (fav of favorites; track fav.id) {
+        <div class="fav-card">
+          <a [routerLink]="['/books', fav.book]" class="card-link">
+            <div class="cover"
+                 [class.placeholder]="!fav.book_cover"
+                 [style.background]="fav.book_cover ? null : getGradient(fav.book_title)">
+              @if (fav.book_cover) {
+                <img [src]="fav.book_cover" [alt]="fav.book_title" class="cover-img">
+              } @else {
+                <span class="letter">{{ fav.book_title[0] }}</span>
+              }
+              <div class="heart">♥</div>
+            </div>
+            <div class="info">
+              <h3>{{ fav.book_title }}</h3>
+              <p class="author">by {{ fav.book_author }}</p>
+              <div class="row">
+                <span class="price">${{ fav.book_price }}</span>
+                <small class="date">Added {{ fav.created_at | date:'mediumDate' }}</small>
+              </div>
+            </div>
+          </a>
+
+          <button (click)="removeFavorite(fav)" class="btn-remove" title="Remove">
+            ✕
+          </button>
+        </div>
+      }
+    </div>
+  }
+</section>

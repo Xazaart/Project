@@ -1,0 +1,117 @@
+@if (errorMessage && !book) {
+  <div class="error">{{ errorMessage }}</div>
+}
+
+@if (book) {
+  <article class="book-detail">
+    <a routerLink="/books" class="back">← Back to books</a>
+
+    <div class="detail-grid">
+      <div class="cover-col">
+        @if (imageUrl(book)) {
+          <div class="cover">
+            <img [src]="imageUrl(book)" [alt]="book.title" />
+          </div>
+        } @else {
+          <div class="cover placeholder"
+               [style.background]="getGradient(book.title)">
+            <span class="letter">{{ book.title[0] }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="info-col">
+        <span class="category-tag">{{ book.category_name }}</span>
+        <h1>{{ book.title }}</h1>
+        <p class="author">by {{ book.author }}</p>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Price</span>
+            <span class="stat-value price">${{ book.price }}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">In stock</span>
+            <span class="stat-value">{{ book.stock }}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Rating</span>
+            <span class="stat-value rating">★ {{ book.average_rating || 'No ratings' }}</span>
+          </div>
+        </div>
+
+        <p class="description">{{ book.description }}</p>
+
+        @if (successMessage) { <div class="success">{{ successMessage }}</div> }
+        @if (errorMessage)   { <div class="error">{{ errorMessage }}</div> }
+
+        @if (auth.isLoggedIn()) {
+          <div class="actions">
+            <div class="buy-section">
+              <label>Quantity</label>
+              <div class="qty-row">
+                <input type="number" min="1" [max]="book.stock"
+                       [(ngModel)]="quantity" name="quantity" class="qty-input" />
+                <button (click)="buyBook()" [disabled]="book.stock === 0"
+                        class="btn-primary btn-lg">
+                  {{ book.stock === 0 ? 'Out of stock' : '🛒 Buy now' }}
+                </button>
+              </div>
+            </div>
+
+            <button (click)="addToFavorites()" class="btn-fav">
+              ♥ Add to Favorites
+            </button>
+          </div>
+        } @else {
+          <p class="login-note">
+            <a routerLink="/login">Log in</a> to write a review, add to favorites, or buy this book.
+          </p>
+        }
+      </div>
+    </div>
+
+    @if (auth.isLoggedIn()) {
+      <section class="review-form">
+        <h3>✍️ Write a Review</h3>
+
+        <label>Your rating</label>
+        <div class="rating-picker">
+          @for (n of [1,2,3,4,5]; track n) {
+            <button type="button" class="star-btn"
+                    [class.active]="newRating >= n"
+                    (click)="newRating = n">★</button>
+          }
+        </div>
+
+        <label>Your thoughts</label>
+        <textarea [(ngModel)]="newComment" name="comment" rows="4"
+                  placeholder="Share your thoughts about this book..."></textarea>
+
+        <button (click)="submitReview()" [disabled]="!newComment"
+                class="btn-primary">Post Review</button>
+      </section>
+    }
+
+    <section class="reviews">
+      <h3>Reviews ({{ reviews.length }})</h3>
+      @if (reviews.length === 0) {
+        <p class="empty">No reviews yet. Be the first!</p>
+      } @else {
+        @for (r of reviews; track r.id) {
+          <div class="review">
+            <div class="review-head">
+              <div class="avatar">{{ r.username[0].toUpperCase() }}</div>
+              <div class="review-meta">
+                <strong>{{ r.username }}</strong>
+                <small>{{ r.created_at | date:'mediumDate' }}</small>
+              </div>
+              <span class="stars">{{ '★'.repeat(r.rating) }}{{ '☆'.repeat(5 - r.rating) }}</span>
+            </div>
+            <p class="review-text">{{ r.comment }}</p>
+          </div>
+        }
+      }
+    </section>
+  </article>
+}

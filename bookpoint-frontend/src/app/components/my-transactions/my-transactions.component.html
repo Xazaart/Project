@@ -1,0 +1,32 @@
+<section>
+  <h2>My Purchases</h2>
+
+  @if (errorMessage) { <div class="error">{{ errorMessage }}</div> }
+
+  @if (transactions.length === 0) {
+    <p class="empty">You haven't bought anything yet.</p>
+  } @else {
+    <table class="tx-table">
+      <thead>
+        <tr>
+          <th>Book</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (tx of transactions; track tx.id) {
+          <tr>
+            <td>{{ tx.book_title }}</td>
+            <td>{{ tx.quantity }}</td>
+            <td>${{ tx.total_price }}</td>
+            <td><span class="status {{ tx.status }}">{{ tx.status }}</span></td>
+            <td>{{ tx.created_at | date:'mediumDate' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

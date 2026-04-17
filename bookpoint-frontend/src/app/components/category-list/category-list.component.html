@@ -1,0 +1,28 @@
+<section>
+  <h2>Categories</h2>
+
+  @if (errorMessage) { <div class="error">{{ errorMessage }}</div> }
+
+  @if (categories.length === 0) {
+    <p>No categories yet.</p>
+  } @else {
+    <div class="cat-grid">
+      @for (c of categories; track c.id) {
+        <a [routerLink]="['/books']" [queryParams]="{ category: c.id }" class="cat-card">
+          <h3>{{ c.name }}</h3>
+          <p>{{ c.description }}</p>
+          <small>{{ c.book_count }} books</small>
+        </a>
+      }
+    </div>
+  }
+
+  @if (auth.isLoggedIn()) {
+    <section class="add-category">
+      <h3>Add a new category</h3>
+      <input [(ngModel)]="newName" name="name" placeholder="Name" />
+      <input [(ngModel)]="newDesc" name="desc" placeholder="Description" />
+      <button (click)="addCategory()" class="btn-primary">Add</button>
+    </section>
+  }
+</section>

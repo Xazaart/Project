@@ -1,0 +1,157 @@
+@if (!book && !errorMessage) {
+  <p class="loading">Loading checkout...</p>
+}
+
+@if (errorMessage && !book) {
+  <div class="error">{{ errorMessage }}</div>
+}
+
+@if (book) {
+  <div class="checkout-layout">
+
+    <div class="forms-col">
+      <a routerLink="/books/{{book.id}}" class="back">← Back to book</a>
+      <h1>Checkout</h1>
+
+
+      <section class="panel">
+        <h3>📍 Shipping address</h3>
+        <div class="field">
+          <label>Full name</label>
+          <input type="text" [(ngModel)]="fullName" name="fullName"
+                 placeholder="Nazerke Sagyntay" />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" [(ngModel)]="phone" name="phone"
+                   placeholder="+7 700 000 00 00" />
+          </div>
+          <div class="field">
+            <label>City</label>
+            <input type="text" [(ngModel)]="city" name="city" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Street address</label>
+          <input type="text" [(ngModel)]="address" name="address"
+                 placeholder="Tole Bi 59, apt 12" />
+        </div>
+        <div class="field">
+          <label>Postal code</label>
+          <input type="text" [(ngModel)]="postalCode" name="postalCode"
+                 placeholder="050000" />
+        </div>
+      </section>
+
+
+      <section class="panel">
+        <h3>💳 Payment details</h3>
+
+        <div class="card-preview" [class.flipped]="false">
+          <div class="card-brand">VISA</div>
+          <div class="card-number">
+            {{ cardNumber || '•••• •••• •••• ••••' }}
+          </div>
+          <div class="card-bottom">
+            <div>
+              <span class="card-label">Cardholder</span>
+              <span class="card-value">{{ cardholderName || 'YOUR NAME' }}</span>
+            </div>
+            <div>
+              <span class="card-label">Expires</span>
+              <span class="card-value">{{ expiry || 'MM/YY' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Cardholder name</label>
+          <input type="text" [(ngModel)]="cardholderName" name="cardholderName"
+                 placeholder="NAZERKE SAGYNTAY"
+                 style="text-transform: uppercase;" />
+        </div>
+        <div class="field">
+          <label>Card number</label>
+          <input type="text" [(ngModel)]="cardNumber" name="cardNumber"
+                 (input)="formatCardNumber()"
+                 placeholder="4242 4242 4242 4242"
+                 maxlength="19" inputmode="numeric" />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Expiry (MM/YY)</label>
+            <input type="text" [(ngModel)]="expiry" name="expiry"
+                   (input)="formatExpiry()"
+                   placeholder="12/28" maxlength="5" inputmode="numeric" />
+          </div>
+          <div class="field">
+            <label>CVV</label>
+            <input type="text" [(ngModel)]="cvv" name="cvv"
+                   (input)="formatCvv()"
+                   placeholder="123" maxlength="4" inputmode="numeric" />
+          </div>
+        </div>
+
+        <p class="demo-note">
+          🔒 This is a demo checkout for the student project — no real payment
+          is processed. Use any card number like <strong>4242 4242 4242 4242</strong>.
+        </p>
+      </section>
+    </div>
+
+
+    <aside class="summary-col">
+      <div class="summary">
+        <h3>Order summary</h3>
+
+        <div class="item">
+          @if (book.cover_image) {
+            <img [src]="'http://localhost:8000' + book.cover_image" alt="" class="mini-cover" />
+          } @else {
+            <div class="mini-cover placeholder">📖</div>
+          }
+          <div class="item-info">
+            <strong>{{ book.title }}</strong>
+            <small>by {{ book.author }}</small>
+            <span class="qty-badge">× {{ quantity }}</span>
+          </div>
+          <span class="item-price">${{ book.price }}</span>
+        </div>
+
+        <div class="totals">
+          <div class="line">
+            <span>Subtotal</span>
+            <span>${{ subtotal.toFixed(2) }}</span>
+          </div>
+          <div class="line">
+            <span>Shipping</span>
+            <span>{{ shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2) }}</span>
+          </div>
+          @if (shipping === 0) {
+            <small class="free-ship">🎉 Free shipping over $50</small>
+          }
+          <div class="line total">
+            <span>Total</span>
+            <span>${{ total.toFixed(2) }}</span>
+          </div>
+        </div>
+
+        @if (errorMessage) {
+          <div class="error">{{ errorMessage }}</div>
+        }
+
+        <button (click)="payNow()" [disabled]="!isFormValid() || loading"
+                class="pay-btn">
+          {{ loading ? 'Processing...' : 'Pay $' + total.toFixed(2) }}
+        </button>
+
+        <div class="badges">
+          <span>🔒 Secure</span>
+          <span>💳 Visa / Mastercard</span>
+          <span>⚡ Instant</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+}

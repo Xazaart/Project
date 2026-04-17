@@ -1,0 +1,65 @@
+<section class="books-page">
+  <div class="page-header">
+    <h2>Books</h2>
+    <p class="subtitle">Browse our collection of {{ books.length }} books</p>
+  </div>
+
+  <div class="filters">
+    <input type="text" placeholder="🔍 Search by title..."
+           name="search" [(ngModel)]="search"
+           (keyup.enter)="loadBooks()" />
+
+    <select [(ngModel)]="selectedCategory" name="cat">
+      <option [ngValue]="null">All categories</option>
+      @for (cat of categories; track cat.id) {
+        <option [ngValue]="cat.id">{{ cat.name }}</option>
+      }
+    </select>
+
+    <button (click)="loadBooks()" class="btn-primary">Search</button>
+    <button (click)="clearFilters()" class="btn-outline">Clear</button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="error">{{ errorMessage }}</div>
+  }
+
+  @if (loading) {
+    <p class="loading">Loading books...</p>
+  } @else if (books.length === 0) {
+    <p class="empty">📭 No books found. Try different filters.</p>
+  } @else {
+    <div class="grid">
+      @for (book of books; track book.id) {
+        <a [routerLink]="['/books', book.id]" class="book-card">
+          @if (imageUrl(book)) {
+            <div class="book-cover">
+              <img [src]="imageUrl(book)" [alt]="book.title" />
+            </div>
+          } @else {
+            <div class="book-cover placeholder"
+                 [style.background]="getGradient(book.title)">
+              <span class="letter">{{ book.title[0] }}</span>
+            </div>
+          }
+          <div class="book-info">
+            <h3>{{ book.title }}</h3>
+            <p class="author">by {{ book.author }}</p>
+            <div class="book-meta">
+              <span class="category">{{ book.category_name }}</span>
+              <span class="rating">★ {{ book.average_rating || '—' }}</span>
+            </div>
+            <div class="book-footer">
+              <span class="price">${{ book.price }}</span>
+              @if (book.stock > 0) {
+                <span class="stock in">In stock</span>
+              } @else {
+                <span class="stock out">Out of stock</span>
+              }
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</section>

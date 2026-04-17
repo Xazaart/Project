@@ -1,0 +1,16 @@
+<nav class="navbar">
+  <a routerLink="/" class="logo">BookPoint</a>
+  <div class="links">
+    <a routerLink="/books" routerLinkActive="active">Books</a>
+    <a routerLink="/categories" routerLinkActive="active">Categories</a>
+
+    @if (auth.currentUser()) {
+      <a routerLink="/my-transactions" routerLinkActive="active">My Purchases</a>
+      <span class="user-name">Hi, {{ auth.currentUser()?.username }}</span>
+      <button (click)="onLogout()" class="btn btn-outline">Logout</button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+      <a routerLink="/register" routerLinkActive="active">Register</a>
+    }
+  </div>
+</nav>
