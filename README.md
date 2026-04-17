@@ -5,7 +5,7 @@ BookPoint is an integrated digital library and review marketplace where users ca
 The platform provides a user-friendly interface for discovering, organizing, and reviewing books.
 
 ## Group Members
-- Abil Arsen  
+- Abilmazhin Arsen  
 - Sagyntay Nazerke  
 - Jumabay Zhanerke  
 - Gaukarbek Akmaral  
