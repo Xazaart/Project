@@ -29,7 +29,7 @@
                  [class.placeholder]="!fav.book_cover"
                  [style.background]="fav.book_cover ? null : getGradient(fav.book_title)">
               @if (fav.book_cover) {
-                <img [src]="fav.book_cover" [alt]="fav.book_title" class="cover-img">
+                <img [src]="'http://localhost:8000' + fav.book_cover" [alt]="fav.book_title" class="cover-img">
               } @else {
                 <span class="letter">{{ fav.book_title[0] }}</span>
               }
