@@ -3,7 +3,7 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -16,7 +16,12 @@ from .serializers import (
     LoginSerializer, RegisterSerializer,
 )
 
-
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
 
 
 @api_view(['POST'])
@@ -25,9 +30,10 @@ def register_view(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        token, _ = Token.objects.get_or_create(user=user)
+        tokens = get_tokens_for_user(user)
         return Response({
-            'token': token.key,
+            'token': tokens['access'],
+            'refresh': tokens['refresh'],
             'user': {'id': user.id, 'username': user.username, 'email': user.email}
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -48,9 +54,10 @@ def login_view(request):
         return Response({'detail': 'Invalid credentials'},
                         status=status.HTTP_401_UNAUTHORIZED)
 
-    token, _ = Token.objects.get_or_create(user=user)
+    tokens = get_tokens_for_user(user)
     return Response({
-        'token': token.key,
+        'token': tokens['access'],
+        'refresh': tokens['refresh'],
         'user': {'id': user.id, 'username': user.username, 'email': user.email}
     })
 
@@ -58,9 +65,7 @@ def login_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout_view(request):
-    request.user.auth_token.delete()
     return Response({'detail': 'Logged out successfully'})
-
 
 
 
