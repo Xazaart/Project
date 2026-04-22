@@ -83,14 +83,13 @@ class Review(models.Model):
 
 
 class Favorite(models.Model):
-    """User's favorite books (wishlist)."""
     user = models.ForeignKey(User, related_name='favorites', on_delete=models.CASCADE)
     book = models.ForeignKey(Book, related_name='favorited_by', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-created_at']
-        unique_together = ('user', 'book')   # can't favorite same book twice
+        unique_together = ('user', 'book')
 
     def __str__(self):
         return f"{self.user.username} ♥ {self.book.title}"
